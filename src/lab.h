@@ -2631,6 +2631,7 @@ enum rec_option
    OPTREC_HMNCHANCE,
    OPTREC_CPUCHANCE,
    OPTREC_EXPORT,
+   OPTREC_INPUTSFX,
 
    OPTREC_COUNT
 };
@@ -2819,6 +2820,12 @@ static EventOption LabOptions_Record[OPTREC_COUNT] = {
         .desc = {"Export the recording to a memory card",
                  "for later use or to share with others."},
         .OnSelect = Export_Init,
+    },
+    {
+        .kind = OPTKIND_TOGGLE,
+        .name = "Input Audio Cue",
+        .desc = {"Play button-specific sounds for recording",
+                 "and playback inputs."},
     },
 };
 

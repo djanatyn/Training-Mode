@@ -3786,6 +3786,34 @@ int Record_RearrangeButtons(RecInputs *inputs) {
     return held;
 }
 
+static void Record_PlayInputCue(int pressed)
+{
+    if (pressed & HSD_BUTTON_A) {
+        SFX_PlayCommon(0);
+    }
+    if (pressed & HSD_BUTTON_B) {
+        SFX_PlayCommon(1);
+    }
+    if (pressed & HSD_BUTTON_X) {
+        SFX_PlayCommon(2);
+    }
+    if (pressed & HSD_BUTTON_Y) {
+        SFX_PlayCommon(3);
+    }
+    if (pressed & HSD_TRIGGER_L) {
+        SFX_Play(173);
+    }
+    if (pressed & HSD_TRIGGER_R) {
+        SFX_Play(221);
+    }
+    if (pressed & HSD_TRIGGER_Z) {
+        SFX_Play(251);
+    }
+    if (pressed & HSD_BUTTON_DPAD_UP) {
+        SFX_Play(303);
+    }
+}
+
 void Record_SetInputs(GOBJ *fighter, RecInputs *inputs, bool mirror) {
     FighterData *fighter_data = fighter->userdata;
     HSD_Pad *pad = PadGetEngine(fighter_data->pad_index);
@@ -3900,6 +3928,12 @@ void Record_Update(int ply, RecInputData *input_data, RecInputData *rerecord_inp
                 trigger = pad->triggerRight;
             inputs->trigger = trigger;
 
+            if (LabOptions_Record[OPTREC_INPUTSFX].val) {
+                int pressed = pad->down & (HSD_BUTTON_A | HSD_BUTTON_B | HSD_BUTTON_X | HSD_BUTTON_Y |
+                    HSD_TRIGGER_L | HSD_TRIGGER_R | HSD_TRIGGER_Z | HSD_BUTTON_DPAD_UP);
+                Record_PlayInputCue(pressed);
+            }
+
             // update input_num
             input_data->num = (curr_frame - rec_start);
 
@@ -3915,6 +3949,18 @@ void Record_Update(int ply, RecInputData *input_data, RecInputData *rerecord_inp
                 return;
 
             RecInputs *inputs = &input_data->inputs[curr_frame - 1];
+            if (LabOptions_Record[OPTREC_INPUTSFX].val) {
+                int held = Record_RearrangeButtons(inputs);
+                int prev_held = 0;
+                if (curr_frame > 1) {
+                    RecInputs *prev_inputs = &input_data->inputs[curr_frame - 2];
+                    prev_held = Record_RearrangeButtons(prev_inputs);
+                }
+
+                int pressed = held & ~prev_held;
+                Record_PlayInputCue(pressed);
+            }
+
             Record_SetInputs(fighter, inputs, event_vars->loaded_mirrored);
             break;
         }
