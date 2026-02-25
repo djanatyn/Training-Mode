@@ -3789,28 +3789,16 @@ int Record_RearrangeButtons(RecInputs *inputs) {
 static void Record_PlayInputCue(int pressed)
 {
     if (pressed & HSD_BUTTON_A) {
-        SFX_PlayCommon(0);
+        SFX_Play(119);
     }
     if (pressed & HSD_BUTTON_B) {
-        SFX_PlayCommon(1);
-    }
-    if (pressed & HSD_BUTTON_X) {
-        SFX_PlayCommon(2);
-    }
-    if (pressed & HSD_BUTTON_Y) {
-        SFX_PlayCommon(3);
-    }
-    if (pressed & HSD_TRIGGER_L) {
-        SFX_Play(173);
-    }
-    if (pressed & HSD_TRIGGER_R) {
-        SFX_Play(221);
+        SFX_Play(120);
     }
     if (pressed & HSD_TRIGGER_Z) {
-        SFX_Play(251);
+        SFX_Play(64);
     }
-    if (pressed & HSD_BUTTON_DPAD_UP) {
-        SFX_Play(303);
+    if (pressed & (HSD_BUTTON_X | HSD_BUTTON_Y)) {
+        SFX_Play(34);
     }
 }
 
@@ -3929,8 +3917,8 @@ void Record_Update(int ply, RecInputData *input_data, RecInputData *rerecord_inp
             inputs->trigger = trigger;
 
             if (LabOptions_Record[OPTREC_INPUTSFX].val) {
-                int pressed = pad->down & (HSD_BUTTON_A | HSD_BUTTON_B | HSD_BUTTON_X | HSD_BUTTON_Y |
-                    HSD_TRIGGER_L | HSD_TRIGGER_R | HSD_TRIGGER_Z | HSD_BUTTON_DPAD_UP);
+                int pressed = pad->down & (HSD_BUTTON_A | HSD_BUTTON_B | HSD_BUTTON_X |
+                    HSD_BUTTON_Y | HSD_TRIGGER_Z);
                 Record_PlayInputCue(pressed);
             }
 
